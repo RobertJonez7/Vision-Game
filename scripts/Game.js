@@ -183,12 +183,12 @@ class Game {
         for (let i = 0; i < this.enemies.length; i++) {
             obj1 = this.enemies[i];
 
-            if( obj1.x < 0 || obj1.x > 1250) {
+            if( obj1.x < 0 || obj1.x > window.innerWidth - 50) {
                 obj1.vx = -obj1.vx;
                 obj1.isColliding = true; 
             } 
 
-            if( obj1.y < 0 || obj1.y > 550) {
+            if( obj1.y < 0 || obj1.y > window.innerHeight - 50) {
                 obj1.vy = -obj1.vy; 
                 obj1.isColliding = true;
             }
