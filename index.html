@@ -8,17 +8,22 @@
     <script type="text/javascript" src="scripts/Enemy.js"></script>
     <script type="text/javascript" src="scripts/Player.js"></script>
     <script type="text/javascript" src="scripts/Token.js"></script>
+    <script type="text/javascript" src="scripts/Nodes.js"></script>
     <script src="https://webgazer.cs.brown.edu/webgazer.js?" defer></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="container">
-        <canvas id="canvas" width="1400" height="700" style="border:1px solid lightgrey;">
+        <canvas id="canvas" width="1400" height="700">
             Your browser does not support the HTML5 canvas tag.
         </canvas>
-        <div id="counter">Count: 0</div>
-        <div id="score">Score: 0</div>
+        <div id="score-container">
+            <div id="vision">Vision Game</div>
+            <div id="counter">Count: 0</div>
+            <div id="score">Score: 0</div>
+            <div id="message">You have 10 seconds before the game begins!</div>
+        </div>
         <script>
             const canvasStyle = document.getElementById("canvas").style;
             canvasStyle.width =  window.innerWidth;
@@ -27,17 +32,17 @@
             window.onload = () => {
                 const game = new Game('canvas');
 
-            webgazer.setGazeListener(data => {
-                if (data === null) return;
+                webgazer.setGazeListener(data => {
+                    if (data === null) return;
             
-                let x = data.x;
-                let y = data.y;
+                    let x = data.x;
+                    let y = data.y;
 
-                game.setX(x)
-                game.setY(y);
+                    game.setX(x)
+                    game.setY(y);
                 
-            }).begin();
-        }
+                }).begin();
+            }
         </script>
     </div>
 </body>

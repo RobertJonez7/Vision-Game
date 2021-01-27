@@ -35,7 +35,7 @@ class Player extends GameObject
         }
 
         //Draw a simple square
-        this.context.fillStyle = this.isColliding?'#ff8080':'green';
+        this.context.fillStyle = this.isColliding ? '#da4625' : '#50af6d';
         this.context.fillRect(playerX, playerY, this.width, this.height);
     }
 

@@ -1,14 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
 }
 
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #000000, #142a5e);
+}
 
-/* #canvas {
-    width: 1400px;
-    height: 700px;
-} */
+#score-container {
+    display: flex;
+    position: relative;
+    bottom: .75em;
+    gap: 2em;
+    padding: 1em;
+    font-size: 2em;
+    color: white;
+}
 
 #counter {
     z-index: 100 !important;

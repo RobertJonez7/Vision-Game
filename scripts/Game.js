@@ -9,6 +9,7 @@ class Game {
         this.prevTimeStamp = 0;
         this.count = 0;
         this.score = 0;
+        this.pause = true;
         this.x = x;
         this.y = y;
 
@@ -21,11 +22,13 @@ class Game {
     initialize(canvas) {
         this.canvas = document.getElementById(canvas);
         this.context = this.canvas.getContext('2d');
-
-        this.populateScreen();
-        this.counter();
-
-        window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
+        alert("You have 10 seconds to callibrate your device before the game begins. To callibrate, move your cursor to the four corners of your screen and the center of your screen and click multiple times while looking at your cursor. Failure to do this may result in harder to control character. Try not to move your head, your cursor will move with your eyes. ");
+        alert("Avoid objects and try to collect tokens! You have 10 seconds before the game starts!");
+        setInterval(() => {
+            this.populateScreen();
+            this.counter();
+            window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
+        }, 10000)
     }
 
     /*********************************************************************************
@@ -34,20 +37,26 @@ class Game {
     populateScreen() {
         this.player = new Player(this.context);
         this.enemies = [
-            new Enemy(this.context, 10, 50, 0, 100, 1),
-            new Enemy(this.context, 20, 300, 0, -50, 1),
-            new Enemy(this.context, 30, 0, 50, 50, 1),
-            new Enemy(this.context, 40, 150, 50, 50, 1),
-            new Enemy(this.context, 50, 75, -50, 50, 1),
-            new Enemy(this.context, 60, 300, 50, -50, 1),
-            new Enemy(this.context, 70, 50, 0, 50, 1),
-            new Enemy(this.context, 80, 300, 0, -50, 1),
+            new Enemy(this.context, 20, 50, 0, 150, 1),
+            new Enemy(this.context, 30, 0, 50, 250, 1),
+            new Enemy(this.context, 40, 150, 50, 130, 1),
+            new Enemy(this.context, 50, 75, -50, 360, 1),
+            new Enemy(this.context, 60, 300, 50, -150, 1),
+            new Enemy(this.context, 70, 50, 0, -50, 1),
+            new Enemy(this.context, 80, 300, 0, -250, 1),
             new Enemy(this.context, 90, 0, 50, 50, 1),
+            new Enemy(this.context, 100, 300, 0, -135, 1),
+            new Enemy(this.context, 110, 300, 0, -55, 1),
+            new Enemy(this.context, 120, 300, 0, -350, 1),
+            new Enemy(this.context, 130, 300, 0, 75, 1),
+            new Enemy(this.context, 140, 300, 0, 175, 1),
          
         ];
         this.token = [
             new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 400)), Math.floor(Math.random() * (window.innerHeight - 200))),
         ]
+
+        document.getElementById("message").innerHTML = "Go!";
     }
 
     counter() {
@@ -56,6 +65,14 @@ class Game {
                 this.count++;
             }, 1000)
         }
+    }
+
+    setPause() {
+        this.pause = !this.pause;
+    }
+
+    getPause() {
+        return this.pause;
     }
 
     /*********************************************************************************
@@ -119,7 +136,7 @@ class Game {
             window.requestAnimationFrame(timeStamp => this.gameLoop(timeStamp));
         }
         else {
-            console.log(this.count);
+            document.getElementById("message").innerHTML = "Game Over";
         }
     }
 
@@ -166,12 +183,12 @@ class Game {
         for (let i = 0; i < this.enemies.length; i++) {
             obj1 = this.enemies[i];
 
-            if( obj1.x < 0 || obj1.x > 1350) {
+            if( obj1.x < 0 || obj1.x > 1250) {
                 obj1.vx = -obj1.vx;
                 obj1.isColliding = true; 
             } 
 
-            if( obj1.y < 0 || obj1.y > 650) {
+            if( obj1.y < 0 || obj1.y > 550) {
                 obj1.vy = -obj1.vy; 
                 obj1.isColliding = true;
             }

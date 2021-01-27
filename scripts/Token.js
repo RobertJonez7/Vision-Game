@@ -8,7 +8,7 @@ class Token extends GameObject
     }
 
     draw(){
-        this.context.fillStyle = this.isColliding?'#ff8080':'yellow';
+        this.context.fillStyle = '#dcb323';
         this.context.fillRect(this.x, this.y, this.width, this.height);
     }
 }
