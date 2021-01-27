@@ -1,0 +1,28 @@
+* {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#canvas {
+    width: 100vw;
+    height: 100vh;
+    background-color: aqua;
+}
+
+#player {
+    width: 2em;
+    height: 2em;
+    background-color: green;;
+}
+
+.movable {
+    position: absolute;
+    transition: ease-in-out;
+}

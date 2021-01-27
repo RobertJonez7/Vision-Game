@@ -1,0 +1,35 @@
+<head>
+    <meta charset="UTF-8">
+
+    <title>Game</title>
+
+    <script type="text/javascript" src="scripts/GameWorld.js"></script>
+    <script type="text/javascript" src="scripts/GameObject.js"></script>
+    <script type="text/javascript" src="scripts/Square.js"></script>
+    <script type="text/javascript" src="scripts/Player.js"></script>
+    <script src="https://webgazer.cs.brown.edu/webgazer.js?" defer></script>
+</head>
+
+<body>
+    <canvas id="canvas" width="1400" height="700" style="border:1px solid lightgrey;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <script>
+        window.onload = function (){
+            var gameWorld = new GameWorld('canvas');
+
+            webgazer.setGazeListener(data => {
+                if (data === null) return;
+            
+                let x = data.x;
+                let y = data.y;
+
+                gameWorld.setX(x)
+                gameWorld.setY(y);
+                
+            }).begin();
+        }
+    </script>
+</body>
+
+</html>
