@@ -22,13 +22,16 @@ class Game {
     initialize(canvas) {
         this.canvas = document.getElementById(canvas);
         this.context = this.canvas.getContext('2d');
-        alert("Please callibrate your device. To callibrate, move your cursor to the four corners of your screen and the center of your screen and click multiple times while looking at your cursor. Failure to do this may result in harder to control character. Try not to move your head, your cursor will move with your eyes. ");
+        alert("Please callibrate your device. To callibrate, move your cursor to the four corners of your screen and the center of your screen and click multiple times while looking at your cursor. Failure to do this may result in harder to control character. Try not to move your head, your cursor will move with your eyes. Wait until camera pops up in upper left hand corner to callibrate.");
         alert("Avoid objects and try to collect tokens! Press any button to start!");
         
         this.createPlayer();
         this.populateScreen();
         this.counter();
-        document.addEventListener("keydown", () => this.pause = !this.pause)
+        document.addEventListener("keydown", () => {
+            this.pause = !this.pause;
+        })
+        
         window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
     }
 
@@ -41,8 +44,6 @@ class Game {
 
     populateScreen() {
         this.enemies = [
-            new Enemy(this.context, 105, 50, 0, 150, 1, "green"),
-            new Enemy(this.context, 112, 0, 50, 250, 1, "red"),
             new Enemy(this.context, 118, 150, 50, 130, 1),
             new Enemy(this.context, 128, 75, -50, 360, 1),
             new Enemy(this.context, 138, 300, 50, -150, 1),
@@ -54,13 +55,12 @@ class Game {
             new Enemy(this.context, 120, 300, 0, -350, 1),
             new Enemy(this.context, 130, 300, 0, 75, 1),
             new Enemy(this.context, 140, 300, 0, 175, 1),
+            
          
         ];
         this.token = [
             new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 400)), Math.floor(Math.random() * (window.innerHeight - 200))),
         ]
-
-        document.getElementById("message").innerHTML = "Go!";
     }
 
     counter() {
@@ -107,9 +107,11 @@ class Game {
             const seconds = (timeStamp - this.prevTimeStamp) / 1000;
             this.prevTimeStamp = timeStamp;
 
+            if (!this.pause) {
             for (let i = 0; i < this.enemies.length; i++) {
                 this.enemies[i].update(seconds);
             }
+        }
 
             this.player.update(seconds);
 
@@ -117,33 +119,45 @@ class Game {
 
             this.clearCanvas();
 
-            if (!this.pause) {
-                for (let i = 0; i < this.enemies.length; i++) {
-                    this.enemies[i].draw();
-                }
+
+            for (let i = 0; i < this.enemies.length; i++) {
+                this.enemies[i].draw();
+            }
             
 
-                if (this.token[0]) {
-                    this.token[0].draw();
-                }
-                else {
-                    this.token = [
-                        new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 150)), Math.floor(Math.random() * (window.innerHeight - 200))),
-                    ];
+            if (this.token[0]) {
+                this.token[0].draw();
+            }
+            else {
+                this.token = [
+                    new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 150)), Math.floor(Math.random() * (window.innerHeight - 200))),
+                ];
 
-                    this.token[0].draw();
-                }
+                this.token[0].draw();
             }
 
             this.player.draw(this.x, this.y);
 
             this.detectPlayerCollision();
-            this.detectPlayerCollisionWithToken();
+
+            if (!this.pause) {
+                this.detectPlayerCollisionWithToken();
+            }
+
             this.drawScore();
+
+            if (this.pause) {
+                document.getElementById("message").innerHTML = "Press any button to start!";
+            }
+            else {
+                document.getElementById("message").innerHTML = "Go!";
+            }
+
 
             window.requestAnimationFrame(timeStamp => this.gameLoop(timeStamp));
         }
         else {
+            
             document.getElementById("message").innerHTML = "Game Over";
         }
     }
@@ -201,7 +215,7 @@ class Game {
                 obj1.isColliding = true; 
             } 
 
-            if( obj1.y < 0 || obj1.y > window.innerHeight - 100) {
+            if(obj1.y < 0 || obj1.y > window.innerHeight - 100) {
                 obj1.vy = -obj1.vy; 
                 obj1.isColliding = true;
             }
