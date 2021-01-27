@@ -24,7 +24,7 @@ class Game {
         this.context = this.canvas.getContext('2d');
         alert("You have 10 seconds to callibrate your device before the game begins. To callibrate, move your cursor to the four corners of your screen and the center of your screen and click multiple times while looking at your cursor. Failure to do this may result in harder to control character. Try not to move your head, your cursor will move with your eyes. ");
         alert("Avoid objects and try to collect tokens! You have 10 seconds before the game starts!");
-        setInterval(() => {
+        setTimeout(() => {
             this.populateScreen();
             this.counter();
             window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
