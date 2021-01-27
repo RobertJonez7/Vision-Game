@@ -22,31 +22,33 @@ class Game {
     initialize(canvas) {
         this.canvas = document.getElementById(canvas);
         this.context = this.canvas.getContext('2d');
-        alert("You have 10 seconds to callibrate your device before the game begins. To callibrate, move your cursor to the four corners of your screen and the center of your screen and click multiple times while looking at your cursor. Failure to do this may result in harder to control character. Try not to move your head, your cursor will move with your eyes. ");
-        alert("Avoid objects and try to collect tokens! You have 10 seconds before the game starts!");
-
+        alert("Please callibrate your device. To callibrate, move your cursor to the four corners of your screen and the center of your screen and click multiple times while looking at your cursor. Failure to do this may result in harder to control character. Try not to move your head, your cursor will move with your eyes. ");
+        alert("Avoid objects and try to collect tokens! Press any button to start!");
+        
+        this.createPlayer();
         this.populateScreen();
         this.counter();
-
-        setTimeout(() => {
-            window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
-        }, 10000)
+        document.addEventListener("keydown", () => this.pause = !this.pause)
+        window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
     }
 
     /*********************************************************************************
      * Creates and populates screen with enemies.
     *********************************************************************************/
-    populateScreen() {
+   createPlayer() {
         this.player = new Player(this.context);
+   }
+
+    populateScreen() {
         this.enemies = [
-            new Enemy(this.context, 20, 50, 0, 150, 1),
-            new Enemy(this.context, 30, 0, 50, 250, 1),
-            new Enemy(this.context, 40, 150, 50, 130, 1),
-            new Enemy(this.context, 50, 75, -50, 360, 1),
-            new Enemy(this.context, 60, 300, 50, -150, 1),
-            new Enemy(this.context, 70, 50, 0, -50, 1),
-            new Enemy(this.context, 80, 300, 0, -250, 1),
-            new Enemy(this.context, 90, 0, 50, 50, 1),
+            new Enemy(this.context, 105, 50, 0, 150, 1, "green"),
+            new Enemy(this.context, 112, 0, 50, 250, 1, "red"),
+            new Enemy(this.context, 118, 150, 50, 130, 1),
+            new Enemy(this.context, 128, 75, -50, 360, 1),
+            new Enemy(this.context, 138, 300, 50, -150, 1),
+            new Enemy(this.context, 135, 50, 0, -50, 1),
+            new Enemy(this.context, 125, 300, 0, -250, 1),
+            new Enemy(this.context, 115, 0, 50, 50, 1),
             new Enemy(this.context, 100, 300, 0, -135, 1),
             new Enemy(this.context, 110, 300, 0, -55, 1),
             new Enemy(this.context, 120, 300, 0, -350, 1),
@@ -62,7 +64,7 @@ class Game {
     }
 
     counter() {
-        if (!this.player.isColliding) {
+        if (!this.player.isColliding && !this.pause) {
             setInterval(() => {
                 this.count++;
             }, 1000)
@@ -101,6 +103,7 @@ class Game {
     *********************************************************************************/
     gameLoop(timeStamp) {
         if (!this.player.isColliding) {
+
             const seconds = (timeStamp - this.prevTimeStamp) / 1000;
             this.prevTimeStamp = timeStamp;
 
@@ -114,22 +117,25 @@ class Game {
 
             this.clearCanvas();
 
-            for (let i = 0; i < this.enemies.length; i++) {
-                this.enemies[i].draw();
+            if (!this.pause) {
+                for (let i = 0; i < this.enemies.length; i++) {
+                    this.enemies[i].draw();
+                }
+            
+
+                if (this.token[0]) {
+                    this.token[0].draw();
+                }
+                else {
+                    this.token = [
+                        new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 150)), Math.floor(Math.random() * (window.innerHeight - 200))),
+                    ];
+
+                    this.token[0].draw();
+                }
             }
 
             this.player.draw(this.x, this.y);
-
-            if (this.token[0]) {
-                this.token[0].draw();
-            }
-            else {
-                this.token = [
-                    new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 150)), Math.floor(Math.random() * (window.innerHeight - 200))),
-                ];
-
-                this.token[0].draw();
-            }
 
             this.detectPlayerCollision();
             this.detectPlayerCollisionWithToken();
@@ -153,7 +159,12 @@ class Game {
                 rect1.x + rect1.width > rect2.x &&
                 rect1.y < rect2.y + rect2.height &&
                 rect1.y + rect1.height > rect2.y) {
-                 this.player.isColliding = true;
+                if (this.pause) {
+                    this.player.isColliding = false;
+                }
+                else {
+                    this.player.isColliding = true;
+                }
              }
         }
     }
@@ -185,12 +196,12 @@ class Game {
         for (let i = 0; i < this.enemies.length; i++) {
             obj1 = this.enemies[i];
 
-            if( obj1.x < 0 || obj1.x > window.innerWidth - 50) {
+            if( obj1.x < 0 || obj1.x > window.innerWidth - 100) {
                 obj1.vx = -obj1.vx;
                 obj1.isColliding = true; 
             } 
 
-            if( obj1.y < 0 || obj1.y > window.innerHeight - 50) {
+            if( obj1.y < 0 || obj1.y > window.innerHeight - 100) {
                 obj1.vy = -obj1.vy; 
                 obj1.isColliding = true;
             }
@@ -240,7 +251,7 @@ class Game {
     }
 
     drawScore() {
-        document.getElementById("counter").innerHTML = "Time: " + this.count;
+        document.getElementById("counter").innerHTML = "Time: " + this.count + 's';
         document.getElementById("score").innerHTML = "Score: " + this.score;
     }
 }
