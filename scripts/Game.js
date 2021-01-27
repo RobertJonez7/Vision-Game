@@ -1,11 +1,14 @@
-class GameWorld {
+class Game {
     constructor(canvas, x, y){
         this.canvas = null;
         this.context = null;
         this.player = null;
-        this.gameObjects = [];
+        this.enemies = [];
+        this.token = [];
         this.resetCounter = 0;
-        this.oldTimeStamp = 0;
+        this.prevTimeStamp = 0;
+        this.count = 0;
+        this.score = 0;
         this.x = x;
         this.y = y;
 
@@ -20,6 +23,7 @@ class GameWorld {
         this.context = this.canvas.getContext('2d');
 
         this.populateScreen();
+        this.counter();
 
         window.requestAnimationFrame(timeStamp => {this.gameLoop(timeStamp)});
     }
@@ -29,18 +33,29 @@ class GameWorld {
     *********************************************************************************/
     populateScreen() {
         this.player = new Player(this.context);
-        this.gameObjects = [
-            new Square(this.context, 10, 50, 0, 100, 1),
-            new Square(this.context, 20, 300, 0, -50, 1),
-            new Square(this.context, 30, 0, 50, 50, 1),
-            new Square(this.context, 40, 150, 50, 50, 1),
-            new Square(this.context, 50, 75, -50, 50, 1),
-            new Square(this.context, 60, 300, 50, -50, 1),
-            new Square(this.context, 70, 50, 0, 50, 1),
-            new Square(this.context, 80, 300, 0, -50, 1),
-            new Square(this.context, 90, 0, 50, 50, 1),
+        this.enemies = [
+            new Enemy(this.context, 10, 50, 0, 100, 1),
+            new Enemy(this.context, 20, 300, 0, -50, 1),
+            new Enemy(this.context, 30, 0, 50, 50, 1),
+            new Enemy(this.context, 40, 150, 50, 50, 1),
+            new Enemy(this.context, 50, 75, -50, 50, 1),
+            new Enemy(this.context, 60, 300, 50, -50, 1),
+            new Enemy(this.context, 70, 50, 0, 50, 1),
+            new Enemy(this.context, 80, 300, 0, -50, 1),
+            new Enemy(this.context, 90, 0, 50, 50, 1),
          
         ];
+        this.token = [
+            new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 400)), Math.floor(Math.random() * (window.innerHeight - 200))),
+        ]
+    }
+
+    counter() {
+        if (!this.player.isColliding) {
+            setInterval(() => {
+                this.count++;
+            }, 1000)
+        }
     }
 
     /*********************************************************************************
@@ -67,28 +82,44 @@ class GameWorld {
     *********************************************************************************/
     gameLoop(timeStamp) {
         if (!this.player.isColliding) {
-            const secondsPassed = (timeStamp - this.oldTimeStamp) / 1000;
-            this.oldTimeStamp = timeStamp;
+            const seconds = (timeStamp - this.prevTimeStamp) / 1000;
+            this.prevTimeStamp = timeStamp;
 
-            for (let i = 0; i < this.gameObjects.length; i++) {
-                this.gameObjects[i].update(secondsPassed);
+            for (let i = 0; i < this.enemies.length; i++) {
+                this.enemies[i].update(seconds);
             }
 
-            this.player.update(secondsPassed);
+            this.player.update(seconds);
 
             this.detectCollisions();
 
             this.clearCanvas();
 
-            for (let i = 0; i < this.gameObjects.length; i++) {
-                this.gameObjects[i].draw();
+            for (let i = 0; i < this.enemies.length; i++) {
+                this.enemies[i].draw();
             }
 
             this.player.draw(this.x, this.y);
 
+            if (this.token[0]) {
+                this.token[0].draw();
+            }
+            else {
+                this.token = [
+                    new Token(this.context, Math.floor(Math.random() * (window.innerWidth - 150)), Math.floor(Math.random() * (window.innerHeight - 200))),
+                ];
+
+                this.token[0].draw();
+            }
+
             this.detectPlayerCollision();
+            this.detectPlayerCollisionWithToken();
+            this.drawScore();
 
             window.requestAnimationFrame(timeStamp => this.gameLoop(timeStamp));
+        }
+        else {
+            console.log(this.count);
         }
     }
 
@@ -96,9 +127,9 @@ class GameWorld {
      * Detects if player have collided with enemies
     *********************************************************************************/
     detectPlayerCollision() {
-        for (let i = 0; i < this.gameObjects.length; i++) {
+        for (let i = 0; i < this.enemies.length; i++) {
             const rect1= this.player;
-            const rect2 = this.gameObjects[i];
+            const rect2 = this.enemies[i];
             if (rect1.x < rect2.x + rect2.width &&
                 rect1.x + rect1.width > rect2.x &&
                 rect1.y < rect2.y + rect2.height &&
@@ -108,6 +139,19 @@ class GameWorld {
         }
     }
 
+    detectPlayerCollisionWithToken() {
+        const rect1 = this.player;
+        const rect2= this.token[0];
+
+        if (rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y) {
+             this.score++;
+             delete this.token[0];
+         }
+    }
+
     /*********************************************************************************
      * Detects collisions for enemies.
     *********************************************************************************/
@@ -115,28 +159,28 @@ class GameWorld {
         let obj1;
         let obj2;
         
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            this.gameObjects[i].isColliding = false;
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].isColliding = false;
         }
 
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            obj1 = this.gameObjects[i];
+        for (let i = 0; i < this.enemies.length; i++) {
+            obj1 = this.enemies[i];
 
-            if( obj1.x < 0 || obj1.x > 1400) {
+            if( obj1.x < 0 || obj1.x > 1350) {
                 obj1.vx = -obj1.vx;
                 obj1.isColliding = true; 
             } 
 
-            if( obj1.y < 0 || obj1.y > 700) {
+            if( obj1.y < 0 || obj1.y > 650) {
                 obj1.vy = -obj1.vy; 
                 obj1.isColliding = true;
             }
 
-            for (let j = i + 1; j < this.gameObjects.length; j++)
+            for (let j = i + 1; j < this.enemies.length; j++)
             {
-                obj2 = this.gameObjects[j];
+                obj2 = this.enemies[j];
               
-                if (this.rectIntersect(obj1.x, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height)) {
+                if (this.intersection(obj1.x, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height)) {
                     obj1.isColliding = true;
                     obj2.isColliding = true;
 
@@ -161,9 +205,7 @@ class GameWorld {
         }
     }
 
-    rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {
-
-        // Check x and y for overlap
+    intersection(x1, y1, w1, h1, x2, y2, w2, h2) {
         if (x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2){
             return false;
         }
@@ -176,5 +218,10 @@ class GameWorld {
     *********************************************************************************/
     clearCanvas() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    drawScore() {
+        document.getElementById("counter").innerHTML = "Time: " + this.count;
+        document.getElementById("score").innerHTML = "Score: " + this.score;
     }
 }

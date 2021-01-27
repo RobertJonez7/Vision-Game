@@ -4,16 +4,15 @@
     overflow: hidden;
 }
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-#canvas {
-    width: 100vw;
-    height: 100vh;
-    background-color: aqua;
+/* #canvas {
+    width: 1400px;
+    height: 700px;
+} */
+
+#counter {
+    z-index: 100 !important;
+    size: 5em;
 }
 
 #player {

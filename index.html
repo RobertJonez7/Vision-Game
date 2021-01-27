@@ -3,20 +3,29 @@
 
     <title>Game</title>
 
-    <script type="text/javascript" src="scripts/GameWorld.js"></script>
+    <script type="text/javascript" src="scripts/Game.js"></script>
     <script type="text/javascript" src="scripts/GameObject.js"></script>
-    <script type="text/javascript" src="scripts/Square.js"></script>
+    <script type="text/javascript" src="scripts/Enemy.js"></script>
     <script type="text/javascript" src="scripts/Player.js"></script>
+    <script type="text/javascript" src="scripts/Token.js"></script>
     <script src="https://webgazer.cs.brown.edu/webgazer.js?" defer></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <canvas id="canvas" width="1400" height="700" style="border:1px solid lightgrey;">
-        Your browser does not support the HTML5 canvas tag.
-    </canvas>
-    <script>
-        window.onload = function (){
-            var gameWorld = new GameWorld('canvas');
+    <div class="container">
+        <canvas id="canvas" width="1400" height="700" style="border:1px solid lightgrey;">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+        <div id="counter">Count: 0</div>
+        <div id="score">Score: 0</div>
+        <script>
+            const canvasStyle = document.getElementById("canvas").style;
+            canvasStyle.width =  window.innerWidth;
+            canvasStyle.height = window.innerHeight - 75;
+
+            window.onload = () => {
+                const game = new Game('canvas');
 
             webgazer.setGazeListener(data => {
                 if (data === null) return;
@@ -24,12 +33,13 @@
                 let x = data.x;
                 let y = data.y;
 
-                gameWorld.setX(x)
-                gameWorld.setY(y);
+                game.setX(x)
+                game.setY(y);
                 
             }).begin();
         }
-    </script>
+        </script>
+    </div>
 </body>
 
 </html>
